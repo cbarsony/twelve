@@ -1,0 +1,25 @@
+body {
+  background: gray;
+  margin-top: 64px;
+}
+
+.scale {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.line {
+  display: flex;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  background: rgb(80, 80, 80);
+  border: 1px solid #ddd;
+  padding: 2px;
+}
+
+.selected {
+  background: white;
+}
