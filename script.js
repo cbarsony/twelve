@@ -1,5 +1,24 @@
 let start = 0;
-const scale = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0];
+let scale = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0];
+const urlParams = new URLSearchParams(window.location.search);
+let strings = Number(urlParams.get("strings")) || 6;
+strings++;
+
+document.body.addEventListener("keydown", function (e) {
+  if (e.key === "r") {
+    scale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    document.getElementById("scale").remove();
+    start = 0;
+    drawScale();
+  }
+});
+
+document.body.addEventListener("click", function () {
+  scale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  document.getElementById("scale").remove();
+  start = 0;
+  drawScale();
+});
 
 function toggleNote(note) {
   if (scale[note] === 0) {
@@ -77,19 +96,39 @@ function drawScale() {
   scaleElement.id = "scale";
   document.body.appendChild(scaleElement);
 
-  for(let line = 1; line < 8; line++) {
+  for (let line = 1; line < strings; line++) {
     const lineDiv = document.createElement("div");
     lineDiv.className = `line line${line}`;
 
+    if (line === 1) {
+      const dot1 = document.createElement("div");
+      dot1.className = "dot dot1";
+
+      const dot2 = document.createElement("div");
+      dot2.className = "dot dot2";
+
+      const dot3 = document.createElement("div");
+      dot3.className = "dot dot3";
+
+      const dot4 = document.createElement("div");
+      dot4.className = "dot dot4";
+
+      lineDiv.appendChild(dot1);
+      lineDiv.appendChild(dot2);
+      lineDiv.appendChild(dot3);
+      lineDiv.appendChild(dot4);
+    }
+
     scaleElement.appendChild(lineDiv);
 
-    for(let cell = 1; cell < 13; cell++) {
+    for (let cell = 1; cell < 13; cell++) {
       const cellElement = document.createElement("div");
       const note = getNote(cell - 1);
       cellElement.className = `cell cell${cell} note${scale[note]}${
         note > 0 ? " selected" : ""
       }`;
-      cellElement.addEventListener("click", () => {
+      cellElement.addEventListener("click", (e) => {
+        e.stopPropagation();
         toggleNote(calculateCellOffset(cell, line) - 1);
       });
 
