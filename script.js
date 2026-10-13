@@ -4,21 +4,30 @@ const urlParams = new URLSearchParams(window.location.search);
 let strings = Number(urlParams.get("strings")) || 6;
 strings++;
 
+const PIANO_OCTAVES = 2;
+// Pitch class 0 is A, so the leftmost piano key (C) is pitch class 3.
+const PIANO_FIRST_NOTE = 3;
+const BLACK_KEYS = [1, 3, 6, 8, 10];
+
 document.body.addEventListener("keydown", function (e) {
   if (e.key === "r") {
     scale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    document.getElementById("scale").remove();
-    start = 0;
-    drawScale();
+    redraw();
   }
 });
 
 document.body.addEventListener("click", function () {
   scale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  redraw();
+});
+
+function redraw() {
   document.getElementById("scale").remove();
+  document.getElementById("piano").remove();
   start = 0;
   drawScale();
-});
+  drawPiano();
+}
 
 function toggleNote(note) {
   if (scale[note] === 0) {
@@ -27,9 +36,7 @@ function toggleNote(note) {
     scale[note] = 0;
   }
 
-  document.getElementById("scale").remove();
-  start = 0;
-  drawScale();
+  redraw();
 }
 
 function getNote(cell) {
@@ -143,4 +150,36 @@ function drawScale() {
   }
 }
 
+function drawPiano() {
+  const pianoElement = document.createElement("div");
+  pianoElement.className = "piano";
+  pianoElement.id = "piano";
+  document.body.appendChild(pianoElement);
+
+  let whiteKeys = 0;
+
+  for (let key = 0; key < 12 * PIANO_OCTAVES; key++) {
+    const note = (key + PIANO_FIRST_NOTE) % 12;
+    const black = BLACK_KEYS.includes(key % 12);
+    const keyElement = document.createElement("div");
+    keyElement.className = `key ${black ? "black" : "white"}${
+      scale[note] ? " selected" : ""
+    }`;
+
+    if (black) {
+      keyElement.style.left = `calc(${whiteKeys} * (var(--white-key-width) - 1px) - var(--black-key-width) / 2)`;
+    } else {
+      whiteKeys++;
+    }
+
+    keyElement.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleNote(note);
+    });
+
+    pianoElement.appendChild(keyElement);
+  }
+}
+
 drawScale();
+drawPiano();
