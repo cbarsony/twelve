@@ -1,5 +1,53 @@
 html {
   height: 100%;
+  --bg: hsl(0 0% 50%);
+  --cell: hsl(0 0% 31%);
+  --border: hsl(0 0% 73%);
+  --selected: hsl(0 0% 100%);
+  --dot: hsl(0 0% 65%);
+  --hover: hsl(0 0% 47%);
+  --selected-hover: hsl(0 0% 80%);
+}
+
+html[data-theme="green"] {
+  --bg: hsl(130 8% 48%);
+  --cell: hsl(130 10% 30%);
+  --border: hsl(130 12% 73%);
+  --selected: hsl(130 25% 96%);
+  --dot: hsl(130 10% 65%);
+  --hover: hsl(130 9% 45%);
+  --selected-hover: hsl(130 14% 80%);
+}
+
+html[data-theme="blue"] {
+  --bg: hsl(215 10% 49%);
+  --cell: hsl(215 13% 30%);
+  --border: hsl(215 14% 74%);
+  --selected: hsl(215 30% 97%);
+  --dot: hsl(215 12% 66%);
+  --hover: hsl(215 11% 46%);
+  --selected-hover: hsl(215 16% 81%);
+}
+
+html[data-theme="brown"] {
+  --bg: hsl(30 10% 48%);
+  --cell: hsl(28 14% 29%);
+  --border: hsl(32 15% 73%);
+  --selected: hsl(38 35% 96%);
+  --dot: hsl(32 12% 65%);
+  --hover: hsl(30 11% 45%);
+  --selected-hover: hsl(34 18% 80%);
+}
+
+.theme-switcher {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  padding: 4px 8px;
+  background: var(--cell);
+  color: var(--selected);
+  border: 1px solid var(--border);
+  border-radius: 4px;
 }
 
 * {
@@ -7,7 +55,7 @@ html {
 }
 
 body {
-  background: gray;
+  background: var(--bg);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -29,14 +77,14 @@ body {
 .cell {
   width: 50px;
   height: 50px;
-  background: rgb(80, 80, 80);
-  border: 1px solid #bbb;
+  background: var(--cell);
+  border: 1px solid var(--border);
   margin: -1px 0 0 -1px;
   padding: 2px;
 }
 
 .selected {
-  background: white;
+  background: var(--selected);
 }
 
 .dot {
@@ -44,7 +92,7 @@ body {
   bottom: 153px;
   width: 20px;
   height: 20px;
-  background: #a5a5a5;
+  background: var(--dot);
   opacity: 0.6;
   border-radius: 10px;
   z-index: 1;
@@ -74,8 +122,8 @@ body {
 }
 
 .key {
-  background: rgb(80, 80, 80);
-  border: 1px solid #bbb;
+  background: var(--cell);
+  border: 1px solid var(--border);
   box-sizing: border-box;
 }
 
@@ -94,15 +142,15 @@ body {
 }
 
 .key.selected {
-  background: white;
+  background: var(--selected);
 }
 
 .cell.hovered,
 .key.hovered {
-  background: #777;
+  background: var(--hover);
 }
 
 .cell.selected.hovered,
 .key.selected.hovered {
-  background: #ccc;
+  background: var(--selected-hover);
 }

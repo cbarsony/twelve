@@ -26,6 +26,23 @@ function addHover(element, note) {
   element.addEventListener("mouseleave", () => setHoveredNote(null));
 }
 
+const themeSwitcher = document.getElementById("theme-switcher");
+
+function setTheme(theme) {
+  if (theme) {
+    document.documentElement.dataset.theme = theme;
+  } else {
+    delete document.documentElement.dataset.theme;
+  }
+  themeSwitcher.value = theme;
+  localStorage.setItem("theme", theme);
+}
+
+setTheme(localStorage.getItem("theme") || "");
+themeSwitcher.addEventListener("change", () => setTheme(themeSwitcher.value));
+// Body click clears the scale.
+themeSwitcher.addEventListener("click", (e) => e.stopPropagation());
+
 document.body.addEventListener("keydown", function (e) {
   if (e.key === "r") {
     scale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
