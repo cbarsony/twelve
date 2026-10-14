@@ -39,6 +39,10 @@ body {
   background: white;
 }
 
+.selected.hovered {
+  background: #ccc;
+}
+
 .dot {
   position: absolute;
   bottom: 153px;
@@ -95,4 +99,8 @@ body {
 
 .key.selected {
   background: white;
+}
+
+.key.selected.hovered {
+  background: #ccc;
 }

@@ -8,6 +8,23 @@ const PIANO_OCTAVES = 2;
 // Pitch class 0 is A, so the leftmost piano key (C) is pitch class 3.
 const PIANO_FIRST_NOTE = 3;
 const BLACK_KEYS = [1, 3, 6, 8, 10];
+let hoveredNote = null;
+
+function setHoveredNote(note) {
+  hoveredNote = note;
+  document.querySelectorAll("[data-note]").forEach((el) => {
+    el.classList.toggle("hovered", Number(el.dataset.note) === note);
+  });
+}
+
+function addHover(element, note) {
+  element.dataset.note = note;
+  if (note === hoveredNote) {
+    element.classList.add("hovered");
+  }
+  element.addEventListener("mouseenter", () => setHoveredNote(note));
+  element.addEventListener("mouseleave", () => setHoveredNote(null));
+}
 
 document.body.addEventListener("keydown", function (e) {
   if (e.key === "r") {
@@ -138,6 +155,7 @@ function drawScale() {
         e.stopPropagation();
         toggleNote(calculateCellOffset(cell, line) - 1);
       });
+      addHover(cellElement, calculateCellOffset(cell, line) - 1);
 
       lineDiv.appendChild(cellElement);
     }
@@ -176,6 +194,7 @@ function drawPiano() {
       e.stopPropagation();
       toggleNote(note);
     });
+    addHover(keyElement, note);
 
     pianoElement.appendChild(keyElement);
   }
