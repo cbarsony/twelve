@@ -83,52 +83,9 @@ function getNote(cell) {
   return scale[firstNote];
 }
 
-function calculateCellOffset(cell, line) {
-  let result = cell;
-
-  switch (line) {
-    case 1:
-      result = cell;
-      break;
-
-    case 2:
-      result = cell - 7;
-      break;
-
-    case 3:
-      result = cell - 2;
-      break;
-
-    case 4:
-      result = cell + 3;
-      break;
-
-    case 5:
-      result = cell + 8;
-      break;
-
-    case 6:
-      result = cell + 1;
-      break;
-
-    case 7:
-      result = cell + 6;
-      break;
-
-    default:
-      result = cell;
-      break;
-  }
-
-  if (result < 1) {
-    result += 12;
-  }
-
-  if (result > 12) {
-    result -= 12;
-  }
-
-  return result;
+// Pitch class shown by a cell. `cell` and `line` are 1-based.
+function calculateCellNote(cell, line) {
+  return (cell - 1 + 5 * (line - 1)) % 12;
 }
 
 function drawScale() {
@@ -170,9 +127,9 @@ function drawScale() {
       }`;
       cellElement.addEventListener("click", (e) => {
         e.stopPropagation();
-        toggleNote(calculateCellOffset(cell, line) - 1);
+        toggleNote(calculateCellNote(cell, line));
       });
-      addHover(cellElement, calculateCellOffset(cell, line) - 1);
+      addHover(cellElement, calculateCellNote(cell, line));
 
       lineDiv.appendChild(cellElement);
     }

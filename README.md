@@ -66,7 +66,7 @@ Each change rebuilds the grid from the `scale` array. The scale is not persisted
 - `script.js` keeps the `scale` array, builds the grid and handles input, hover highlighting and the theme.
   - `drawScale()` creates the DOM: one container `#scale`, one `.line` per string, and 12 `.cell` elements per line.
   - `getNote()` computes which pitch class a cell shows from its column and the row's offset.
-  - `calculateCellOffset()` is the inverse. It maps a clicked cell back to a pitch class, using a lookup per row.
+  - `calculateCellNote()` is the inverse. It maps a clicked cell back to a pitch class with `(cell + 5 * row) mod 12`, so it works for any number of rows.
   - `toggleNote()` flips a pitch class and calls `redraw()`, which rebuilds both views.
   - `drawPiano()` creates `#piano`: white keys in a flex row, with black keys absolutely positioned over them.
 - `style.css` defines the colours as CSS variables, one set per theme (selected by `data-theme` on `<html>`). It lays the grid out with flexbox. Rows are stacked in reverse order so row 1 is at the bottom, and the inlay markers are absolutely positioned.
@@ -84,7 +84,6 @@ Then open `http://localhost:3000/`.
 ## Known limitations
 
 - The marker dots use hardcoded pixel positions that assume 6 rows, so they are misplaced with other string counts.
-- `calculateCellOffset()` has explicit cases for rows 1 to 7 only. Beyond 7 rows, clicks toggle the wrong pitch class.
 - `getNote()` returns the 0/1 value of the scale and `drawScale()` then uses it as an index into `scale`. This works by accident in the default case and is likely to cause surprises if the code changes.
 - The whole grid is rebuilt on every click. This is fine at this size but not a pattern to scale up.
 - There is no keyboard or screen-reader accessibility beyond the `r` shortcut.
@@ -98,6 +97,5 @@ These are ideas, not commitments.
 - Interval labels or highlights relative to a chosen root.
 - Optional note names, with the choice of root made explicit.
 - Presets for common scales and modes.
-- Replacing the per-row lookup with arithmetic, `(5 * (row - 1)) mod 12`, which would remove the 7-row limit.
 - Audio playback.
 - Persisting the scale in the URL.
