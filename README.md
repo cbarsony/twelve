@@ -2,6 +2,12 @@
 
 An interactive "2D scale" for exploring scales, modes and intervals on a guitar/piano hybrid layout.
 
+> **Status: MVP.** Usable today, flaws known and prioritised (see [Known limitations](#known-limitations)).
+
+**[Live demo](https://cbarsony.github.io/twelve/)**
+
+![The twelve grid and piano keyboard, showing the default diatonic scale](docs/screenshot.png)
+
 ## Abstract
 
 Western music has twelve pitch classes. Instruments present them in different ways. A piano lays them out in one dimension, with the pattern repeating every octave. A guitar lays them out in two dimensions (strings by frets), but the usual tuning breaks the pattern, because one string pair is a major third apart instead of a fourth.
@@ -49,19 +55,21 @@ The page shows only pitch-class membership. It has no note names, no octave regi
 | Press `r` | Clear the scale. |
 | Load the page | Show the default diatonic scale. |
 | `?strings=N` | Set the number of rows. A missing, zero or non-numeric value falls back to 6. |
+| Hover a cell or key | Highlight every cell and key with the same pitch class, in both views. |
+| Theme selector (top right) | Switch between the Gray, Brown, Green and Blue themes. The choice is saved in `localStorage` and restored on the next visit. |
 
-Each change rebuilds the grid from the `scale` array. State is not persisted, so reloading the page restores the default.
+Each change rebuilds the grid from the `scale` array. The scale is not persisted, so reloading the page restores the default. Only the theme is persisted.
 
 ### Implementation
 
-- `index.html` is an empty page that loads `style.css` and `script.js`.
-- `script.js` keeps the `scale` array, builds the grid and handles input.
+- `index.html` is a minimal page with the theme selector. It loads `style.css` and `script.js`, which build the rest of the page.
+- `script.js` keeps the `scale` array, builds the grid and handles input, hover highlighting and the theme.
   - `drawScale()` creates the DOM: one container `#scale`, one `.line` per string, and 12 `.cell` elements per line.
   - `getNote()` computes which pitch class a cell shows from its column and the row's offset.
   - `calculateCellOffset()` is the inverse. It maps a clicked cell back to a pitch class, using a lookup per row.
   - `toggleNote()` flips a pitch class and calls `redraw()`, which rebuilds both views.
   - `drawPiano()` creates `#piano`: white keys in a flex row, with black keys absolutely positioned over them.
-- `style.css` lays the grid out with flexbox. Rows are stacked in reverse order so row 1 is at the bottom, and the inlay markers are absolutely positioned.
+- `style.css` defines the colours as CSS variables, one set per theme (selected by `data-theme` on `<html>`). It lays the grid out with flexbox. Rows are stacked in reverse order so row 1 is at the bottom, and the inlay markers are absolutely positioned.
 
 ### Running
 
@@ -79,7 +87,8 @@ Then open `http://localhost:3000/`.
 - `calculateCellOffset()` has explicit cases for rows 1 to 7 only. Beyond 7 rows, clicks toggle the wrong pitch class.
 - `getNote()` returns the 0/1 value of the scale and `drawScale()` then uses it as an index into `scale`. This works by accident in the default case and is likely to cause surprises if the code changes.
 - The whole grid is rebuilt on every click. This is fine at this size but not a pattern to scale up.
-- There is no keyboard or screen-reader accessibility beyond the `r` shortcut, and no persistence.
+- There is no keyboard or screen-reader accessibility beyond the `r` shortcut.
+- The scale is not persisted. Only the theme is.
 
 ## Possible directions
 
