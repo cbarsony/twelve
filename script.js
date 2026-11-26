@@ -5,6 +5,8 @@ const strings = Number(urlParams.get("strings")) || 6;
 const PIANO_OCTAVES = 2;
 // Pitch class 0 is A, so the leftmost piano key (C) is pitch class 3.
 const PIANO_FIRST_NOTE = 3;
+// The bottom-left grid cell (open low string) is E, pitch class 7, as on a guitar.
+const GUITAR_FIRST_NOTE = 7;
 const BLACK_KEYS = [1, 3, 6, 8, 10];
 let hoveredNote = null;
 
@@ -72,7 +74,7 @@ function toggleNote(note) {
 
 // Pitch class shown by a cell. `cell` and `line` are 1-based.
 function calculateCellNote(cell, line) {
-  return (cell - 1 + 5 * (line - 1)) % 12;
+  return (GUITAR_FIRST_NOTE + cell - 1 + 5 * (line - 1)) % 12;
 }
 
 function drawScale() {

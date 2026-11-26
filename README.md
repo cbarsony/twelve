@@ -32,7 +32,7 @@ The page shows only pitch-class membership. It has no note names, no octave regi
 ### Model
 
 - The state is a 12-element array, `scale`, indexed by pitch class. `1` means the pitch class is in the scale and `0` means it is not.
-- Index `0` is only a reference point, the leftmost cell of the bottom row. It is not a note name and not a root.
+- Index `0` is only a reference point (A on the piano). It is not a root. The leftmost cell of the bottom row is pitch class `7` (E), as on a guitar.
 - The default state is the diatonic scale: `[1,0,1,1,0,1,0,1,1,0,1,0]`. Read from index 0, this has seven notes with the interval pattern 2-1-2-2-1-2-2, which is the natural minor mode. Every mode of the diatonic scale is a rotation of this array.
 
 ### Layout
@@ -65,7 +65,7 @@ Each change rebuilds the grid from the `scale` array. The scale is not persisted
 - `index.html` is a minimal page with the theme selector. It loads `style.css` and `script.js`, which build the rest of the page.
 - `script.js` keeps the `scale` array, builds the grid and handles input, hover highlighting and the theme.
   - `drawScale()` creates the DOM: one container `#scale`, one `.line` per string, and 12 `.cell` elements per line.
-  - `calculateCellNote()` returns the pitch class a cell shows, with `(cell + 5 * row) mod 12` on 0-based indices, so it works for any number of rows.
+  - `calculateCellNote()` returns the pitch class a cell shows, with `(7 + cell + 5 * row) mod 12` on 0-based indices (the `7` makes the bottom-left cell E), so it works for any number of rows.
   - `toggleNote()` flips a pitch class and calls `redraw()`, which rebuilds both views.
   - `drawPiano()` creates `#piano`: white keys in a flex row, with black keys absolutely positioned over them.
 - `style.css` defines the colours as CSS variables, one set per theme (selected by `data-theme` on `<html>`). It lays the grid out with flexbox. Rows are stacked in reverse order so row 1 is at the bottom, and the inlay markers are absolutely positioned.
@@ -90,7 +90,7 @@ Twelve is an MVP, so these flaws are known and ranked on purpose. Shipping early
 | The marker dots use fixed pixel positions that assume 6 rows, so they are misplaced with a different `?strings=N`. | Cosmetic. Only affects non-default row counts. The default layout is correct. | P2 | The default case works, and `?strings=N` is a secondary feature. Fixing it properly means positioning the dots relative to the grid. |
 | The scale is not persisted. Reloading restores the default. | Mild annoyance. You lose a custom scale on reload. | P2 | The default is a sensible start and a scale is quick to re-enter. Persisting it in the URL would also make scales shareable, so that is worth doing together as one feature (see [Possible directions](#possible-directions)). |
 | The whole grid is rebuilt on every click. | None at this size. It is 6×12 cells plus 24 keys, which is fast enough. | P3 | It keeps the code simple, since the DOM always matches the `scale` array. Optimising it would add state-syncing code for no visible gain. |
-| There are no automated tests. | A regression in the layout formula could go unnoticed. | P3 | The core is a single formula, `(c + 5r) mod 12`, which is checked by hand against the default layout. A test setup would add tooling to a project that has none. |
+| There are no automated tests. | A regression in the layout formula could go unnoticed. | P3 | The core is a single formula, `(7 + c + 5r) mod 12`, which is checked by hand against the default layout. A test setup would add tooling to a project that has none. |
 | There is no audio and there are no note names. | Not a flaw, a scope limit. The tool shows structure only. | P3 | Deliberate. Note names and a fixed root would hide the central idea that shapes are the same everywhere (see [Intent](#intent)). |
 
 ## Possible directions
