@@ -1,8 +1,6 @@
-let start = 0;
 let scale = [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0];
 const urlParams = new URLSearchParams(window.location.search);
-let strings = Number(urlParams.get("strings")) || 6;
-strings++;
+const strings = Number(urlParams.get("strings")) || 6;
 
 const PIANO_OCTAVES = 2;
 // Pitch class 0 is A, so the leftmost piano key (C) is pitch class 3.
@@ -58,7 +56,6 @@ document.body.addEventListener("click", function () {
 function redraw() {
   document.getElementById("scale").remove();
   document.getElementById("piano").remove();
-  start = 0;
   drawScale();
   drawPiano();
 }
@@ -73,16 +70,6 @@ function toggleNote(note) {
   redraw();
 }
 
-function getNote(cell) {
-  let firstNote = cell + start;
-
-  if (firstNote > 11) {
-    firstNote -= 12;
-  }
-
-  return scale[firstNote];
-}
-
 // Pitch class shown by a cell. `cell` and `line` are 1-based.
 function calculateCellNote(cell, line) {
   return (cell - 1 + 5 * (line - 1)) % 12;
@@ -94,7 +81,7 @@ function drawScale() {
   scaleElement.id = "scale";
   document.body.appendChild(scaleElement);
 
-  for (let line = 1; line < strings; line++) {
+  for (let line = 1; line <= strings; line++) {
     const lineDiv = document.createElement("div");
     lineDiv.className = `line line${line}`;
 
@@ -119,25 +106,19 @@ function drawScale() {
 
     scaleElement.appendChild(lineDiv);
 
-    for (let cell = 1; cell < 13; cell++) {
+    for (let cell = 1; cell <= 12; cell++) {
       const cellElement = document.createElement("div");
-      const note = getNote(cell - 1);
-      cellElement.className = `cell cell${cell} note${scale[note]}${
-        note > 0 ? " selected" : ""
+      const note = calculateCellNote(cell, line);
+      cellElement.className = `cell cell${cell}${
+        scale[note] ? " selected" : ""
       }`;
       cellElement.addEventListener("click", (e) => {
         e.stopPropagation();
-        toggleNote(calculateCellNote(cell, line));
+        toggleNote(note);
       });
-      addHover(cellElement, calculateCellNote(cell, line));
+      addHover(cellElement, note);
 
       lineDiv.appendChild(cellElement);
-    }
-
-    start += 5;
-
-    if (start > 11) {
-      start -= 12;
     }
   }
 }
