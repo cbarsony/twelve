@@ -2,7 +2,7 @@
 
 An interactive "2D scale" for exploring scales, modes and intervals on a guitar/piano hybrid layout.
 
-> **Status: MVP.** Usable today, flaws known and prioritised (see [Known limitations](#known-limitations)).
+> **Status: MVP.** Usable today, flaws known and prioritised (see the [backlog](#known-limitations)).
 
 **[Live demo](https://cbarsony.github.io/twelve/)**
 
@@ -65,8 +65,7 @@ Each change rebuilds the grid from the `scale` array. The scale is not persisted
 - `index.html` is a minimal page with the theme selector. It loads `style.css` and `script.js`, which build the rest of the page.
 - `script.js` keeps the `scale` array, builds the grid and handles input, hover highlighting and the theme.
   - `drawScale()` creates the DOM: one container `#scale`, one `.line` per string, and 12 `.cell` elements per line.
-  - `getNote()` computes which pitch class a cell shows from its column and the row's offset.
-  - `calculateCellNote()` is the inverse. It maps a clicked cell back to a pitch class with `(cell + 5 * row) mod 12`, so it works for any number of rows.
+  - `calculateCellNote()` returns the pitch class a cell shows, with `(cell + 5 * row) mod 12` on 0-based indices, so it works for any number of rows.
   - `toggleNote()` flips a pitch class and calls `redraw()`, which rebuilds both views.
   - `drawPiano()` creates `#piano`: white keys in a flex row, with black keys absolutely positioned over them.
 - `style.css` defines the colours as CSS variables, one set per theme (selected by `data-theme` on `<html>`). It lays the grid out with flexbox. Rows are stacked in reverse order so row 1 is at the bottom, and the inlay markers are absolutely positioned.
@@ -83,11 +82,16 @@ Then open `http://localhost:3000/`.
 
 ## Known limitations
 
-- The marker dots use hardcoded pixel positions that assume 6 rows, so they are misplaced with other string counts.
-- `getNote()` returns the 0/1 value of the scale and `drawScale()` then uses it as an index into `scale`. This works by accident in the default case and is likely to cause surprises if the code changes.
-- The whole grid is rebuilt on every click. This is fine at this size but not a pattern to scale up.
-- There is no keyboard or screen-reader accessibility beyond the `r` shortcut.
-- The scale is not persisted. Only the theme is.
+Twelve is an MVP, so these flaws are known and ranked on purpose. Shipping early mattered more than fixing everything. Priority is the order in which they would be tackled: P1 is next, P3 is only worth doing if the project grows.
+
+| Issue | Impact | Priority | Why it's deprioritised |
+| --- | --- | --- | --- |
+| No keyboard or screen-reader access beyond the `r` shortcut. Cells and keys are `div`s, not buttons. | Excludes keyboard and assistive-technology users. | P1 | Not deprioritised. It is the next planned change, and a small one: use `<button>` elements with `aria-pressed` and visible focus. |
+| The marker dots use fixed pixel positions that assume 6 rows, so they are misplaced with a different `?strings=N`. | Cosmetic. Only affects non-default row counts. The default layout is correct. | P2 | The default case works, and `?strings=N` is a secondary feature. Fixing it properly means positioning the dots relative to the grid. |
+| The scale is not persisted. Reloading restores the default. | Mild annoyance. You lose a custom scale on reload. | P2 | The default is a sensible start and a scale is quick to re-enter. Persisting it in the URL would also make scales shareable, so that is worth doing together as one feature (see [Possible directions](#possible-directions)). |
+| The whole grid is rebuilt on every click. | None at this size. It is 6×12 cells plus 24 keys, which is fast enough. | P3 | It keeps the code simple, since the DOM always matches the `scale` array. Optimising it would add state-syncing code for no visible gain. |
+| There are no automated tests. | A regression in the layout formula could go unnoticed. | P3 | The core is a single formula, `(c + 5r) mod 12`, which is checked by hand against the default layout. A test setup would add tooling to a project that has none. |
+| There is no audio and there are no note names. | Not a flaw, a scope limit. The tool shows structure only. | P3 | Deliberate. Note names and a fixed root would hide the central idea that shapes are the same everywhere (see [Intent](#intent)). |
 
 ## Possible directions
 
